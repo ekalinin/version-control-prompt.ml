@@ -25,32 +25,19 @@ let () =
 
     let _ = Arg.parse speclist others usage in
 
-    (* Start to do something *)
+    (* Show version *)
     if !show_version
     then print_endline version
-    else 
-        match Scm.get_type_for_dir !work_dir with
-        | None -> print_endline "Nothing here ..."
-        | Some scm -> print_endline scm
-
-
-(*
- *
-    let tmp = String.sub "hello world!!!" 2 4 in
-    print_string tmp ;;
-
-    print_string "\n";;
-
-    let cwd = Sys.getcwd () in
-    print_string cwd ;;
-
-    print_string "\n";;
-
-    let path = Sys.argv.(1) in
-    if Sys.file_exists path
-    then print_string "Exists!"
-    else print_string "Not exists :[" ;;
-
-    print_string "\n" ;;
-
- * *)
+    (* Show info about version control *)
+    else
+        let dir = !work_dir in
+        match Scm.get_type_for_dir dir with
+        | None -> print_endline ""
+        | Some scm ->
+            let o1 = Str.replace_first (Str.regexp "%{type}") scm !output_format
+            (*
+            let branch = get_branch dir scm
+            and o2 = Str.replace_first (Str.regexp "%{branch}") branch o1
+             * *)
+            in
+            print_endline o1

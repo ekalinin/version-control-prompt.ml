@@ -9,7 +9,7 @@ let version = "0.1.0"
 let parse_options =
     let show_version = ref false in
     let work_dir = ref "." in
-    let output_format = ref "%{type}/%{branch}%{dirty}%{stats}" in
+    let output_format = ref "%{type}|%{branch}|%{stats}" in
     let speclist = Arg.align [
         ("--fmt", Arg.Set_string output_format," Template for output");
         ("--dir", Arg.Set_string work_dir,     " Show result for directory");
@@ -32,17 +32,15 @@ let () =
     let (show_version, dir, fmt) = parse_options in
 
     (* Show version *)
-    if show_version
-    then print_endline version
+    if show_version then
+        print_endline version
     (* Show info about version control *)
     else
         match Scm.get_type_for_dir dir with
         | None -> print_endline ""
         | Some scm ->
-            let o1 = Str.replace_first (Str.regexp "%{type}") scm fmt
-            (*
-            let branch = get_branch dir scm
-            and o2 = Str.replace_first (Str.regexp "%{branch}") branch o1
-             * *)
+            let branch = Scm.get_branch dir scm in
+            let o1 = Str.replace_first (Str.regexp "%{type}") scm fmt in
+            let o2 = Str.replace_first (Str.regexp "%{branch}") branch o1
             in
-            print_endline o1
+                print_endline o2

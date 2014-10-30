@@ -44,12 +44,13 @@ let get_type_for_dir path =
     | [(scm, _)] -> Some scm
     | _ -> Some "more than one ..."
 
+
 (**
  *  Returns branch for directory and certain scm
-    TODO: read data from files or use Shell from core_extented
-let get_branch _path scm = match scm with
-    | "svn" -> Sys.command "svn info | grep -E -o '\\^\\/.*'"
-    | "hg"  -> Sys.command "hg branch "
-    | "git" -> Sys.command "git branch | grep '*' | sed 's/* //'"
-    | _     -> "..."
  *)
+let get_branch path scm = match scm with
+    | "svn" -> Utils.sh2 ("svn info "^ path ^"| grep -E -o '\\^\\/.*' | "^
+                            "tr -d '\\n' | tr -d '^' ")
+    | "hg"  -> Utils.sh2 ("cd "^path^" && hg branch | tr -d '\\n'")
+    | "git" -> Utils.sh2 ("cd "^path^" && git branch | grep '*' | sed 's/* //' | tr -d '\\n'")
+    | _     -> ""

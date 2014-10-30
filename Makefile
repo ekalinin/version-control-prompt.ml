@@ -1,3 +1,8 @@
 all:
 	@mkdir -p bin
-	@(cd src && ocamlopt str.cmxa -o ../bin/version-control-prompt scm.ml main.ml)
+	@(cd src && ocamlfind ocamlopt \
+					-package str \
+					-package unix \
+					-linkpkg \
+					utils.ml scm.ml main.ml \
+					-o ../bin/version-control-prompt)

@@ -6,3 +6,7 @@ all:
 					-linkpkg \
 					utils.ml scm.ml main.ml \
 					-o ../bin/version-control-prompt)
+
+clean:
+	@rm -f ./src/*.cmx
+	@rm -f ./src/*.o

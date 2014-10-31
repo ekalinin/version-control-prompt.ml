@@ -51,6 +51,10 @@ let get_type_for_dir path =
 let get_branch path scm = match scm with
     | "svn" -> Utils.sh2 ("svn info "^ path ^"| grep -E -o '\\^\\/.*' | "^
                             "tr -d '\\n' | tr -d '^' ")
-    | "hg"  -> Utils.sh2 ("cd "^path^" && hg branch | tr -d '\\n'")
+    | "hg"  -> let branch_dir = match get_metadata_path path scm with
+                                | Some dir -> dir
+                                | None -> "" in
+               let branch_file = Filename.concat branch_dir "branch" in
+               Utils.read_file branch_file
     | "git" -> Utils.sh2 ("cd "^path^" && git branch | grep '*' | sed 's/* //' | tr -d '\\n'")
     | _     -> ""

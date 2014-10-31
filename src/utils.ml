@@ -15,3 +15,20 @@ let sh2 command =
   done;
   ignore (Unix.close_process_in in_channel);
   Buffer.contents buffer
+
+(**
+ *  Reads file content.
+ *  https://blogs.janestreet.com/pattern-matching-and-exception-handling-unite/
+ *)
+let read_file filename =
+    let rec get_content ch acc =
+        try 
+            get_content ch (input_line ch :: acc)
+        with
+            End_of_file -> List.rev acc
+    in
+    let ch = open_in filename in
+    let content = get_content ch [] in
+    close_in ch;
+    (* Convert from `string list` to string  *)
+    String.concat "" content

@@ -10,3 +10,4 @@ all:
 clean:
 	@rm -f ./src/*.cmx
 	@rm -f ./src/*.o
+	@rm -f ./src/*.cmi

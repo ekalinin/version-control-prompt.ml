@@ -60,11 +60,11 @@ let get_metadata_file_content path scm filename =
  *  Returns branch for directory and certain scm
  *)
 let get_branch path scm = match scm with
-    (* TODO: replace grep/tr with Str.regexp
-     * List.filter ~f:(Utils.contains " URL:") Utils.sh2 "svn info "^path
-     * *)
-    | "svn" -> Utils.sh2 ("svn info "^ path ^" | grep '^URL: ' | "^
-                            "tr -d '\\n' | tr -d '^' | sed 's/URL: //'")
+    | "svn" -> Utils.sh2 ("svn info "^ path)
+                |> Utils.split "\n"
+                |> List.filter (Utils.is_contain "^URL: ")
+                |> List.hd
+                |> Utils.replace "URL: " ""
     | "hg"  -> get_metadata_file_content path scm "branch"
     | "git" -> let txt = get_metadata_file_content path scm "HEAD" in
                 Str.replace_first (Str.regexp "ref: refs/heads/") "" txt

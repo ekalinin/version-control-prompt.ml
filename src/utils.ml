@@ -22,7 +22,7 @@ let sh2 command =
  *)
 let read_file filename =
     let rec get_content ch acc =
-        try 
+        try
             get_content ch (input_line ch :: acc)
         with
             End_of_file -> List.rev acc
@@ -32,3 +32,22 @@ let read_file filename =
     close_in ch;
     (* Convert from `string list` to string  *)
     String.concat "" content
+
+(**
+ * Checks if string [s] contains [pattern]
+ *)
+let is_contain pattern s =
+    let re = Str.regexp pattern in
+    Str.string_match re s 0
+
+(**
+ *  Replace substring [pattern] with [newpart] in string [s]
+ *)
+let replace pattern newpart s =
+    Str.replace_first (Str.regexp pattern) newpart s
+
+(**
+ *  Splits string [s] into List by separator [sep]
+ *)
+let split sep s =
+    Str.split (Str.regexp sep) s

@@ -33,7 +33,8 @@ let is_metadata_dir path scm =
  *  and root directory where meta directory was found
  *)
 let rec get_scm_for_dir path =
-    if Sys.file_exists path then
+    (*Printf.printf " --> %d '%s'\n" (String.compare path "/") path;*)
+    if Sys.file_exists path && (String.compare path "/") != 0 then
         (* Iterate over all supported scm and check metadir existance *)
         let candidates = List.map (fun scm -> (scm, is_metadata_dir path scm))
                                   get_supported_scm in

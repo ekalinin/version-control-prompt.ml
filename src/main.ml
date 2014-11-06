@@ -8,7 +8,7 @@ let version = "0.1.0"
  *)
 let parse_options =
     let show_version = ref false in
-    let work_dir = ref "." in
+    let work_dir = ref (Sys.getcwd ()) in
     let output_format = ref "%type|%branch" in
     let speclist = Arg.align [
         ("--fmt", Arg.Set_string output_format," Template for output,"^

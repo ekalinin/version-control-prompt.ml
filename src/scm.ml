@@ -6,10 +6,10 @@ let get_supported_scm = ["git"; "hg"; "svn"]
 (**
  * Returns typical forlder for certain version control system
  *)
-let get_metadata_dir scm =
-    let scm_clear = String.lowercase scm in
-    match List.exists (fun x -> x = scm_clear) get_supported_scm with
-    | true  -> Some (String.concat "" ["."; scm_clear])
+let get_metadata_dir scm = match scm with
+    | "hg"  -> Some ".hg"
+    | "git" -> Some ".git"
+    | "svn" -> Some ".svn"
     | _     -> None
 
 (**
@@ -29,21 +29,25 @@ let is_metadata_dir path scm =
     | None -> false
 
 (**
- *  Returns type of version control system in certain directory
+ *  Returns type of version control system for entered directory
+ *  and root directory where meta directory was found
  *)
-let get_type_for_dir path =
-    (*
-     * Iterate over all supported scm and
-     * check metadata dir existance
-     *)
-    let candidates = List.map (fun scm -> (scm, is_metadata_dir path scm))
-                              get_supported_scm in
-    (* Save only scm for wich metadata dit exists *)
-    match List.filter (fun (_, is_exists) -> is_exists) candidates with
-    | [] -> None
-    | [(scm, _)] -> Some scm
-    | _ -> Some "more than one ..."
+let rec get_scm_for_dir path =
+    if Sys.file_exists path then
+        (* Iterate over all supported scm and check metadir existance *)
+        let candidates = List.map (fun scm -> (scm, is_metadata_dir path scm))
+                                  get_supported_scm in
+        (* Save only scm for wich metadata dit exists *)
+        match List.filter (fun (_, is_exists) -> is_exists) candidates with
+        | [] -> get_scm_for_dir (Filename.dirname path)
+        | [(scm, _)] -> Some (scm, path)
+        | _ -> None
+    else
+        None
 
+(**
+ *  Reads file from metadata dir in certain directory
+ *)
 let get_metadata_file_content path scm filename =
     let dir =
         match get_metadata_path path scm with
@@ -56,8 +60,11 @@ let get_metadata_file_content path scm filename =
  *  Returns branch for directory and certain scm
  *)
 let get_branch path scm = match scm with
-    | "svn" -> Utils.sh2 ("svn info "^ path ^"| grep -E -o '\\^\\/.*' | "^
-                            "tr -d '\\n' | tr -d '^' ")
+    (* TODO: replace grep/tr with Str.regexp
+     * List.filter ~f:(Utils.contains " URL:") Utils.sh2 "svn info "^path
+     * *)
+    | "svn" -> Utils.sh2 ("svn info "^ path ^" | grep '^URL: ' | "^
+                            "tr -d '\\n' | tr -d '^' | sed 's/URL: //'")
     | "hg"  -> get_metadata_file_content path scm "branch"
     | "git" -> let txt = get_metadata_file_content path scm "HEAD" in
                 Str.replace_first (Str.regexp "ref: refs/heads/") "" txt

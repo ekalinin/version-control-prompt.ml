@@ -36,10 +36,10 @@ let () =
         print_endline version
     (* Show info about version control *)
     else
-        match Scm.get_type_for_dir dir with
+        match Scm.get_scm_for_dir dir with
         | None -> print_endline ""
-        | Some scm ->
-            let branch = Scm.get_branch dir scm in
+        | Some (scm, path) ->
+            let branch = Scm.get_branch path scm in
             let o1 = Str.replace_first (Str.regexp "%{type}") scm fmt in
             let o2 = Str.replace_first (Str.regexp "%{branch}") branch o1
             in

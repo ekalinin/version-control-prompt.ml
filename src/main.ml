@@ -9,9 +9,10 @@ let version = "0.1.0"
 let parse_options =
     let show_version = ref false in
     let work_dir = ref "." in
-    let output_format = ref "%{type}|%{branch}|%{stats}" in
+    let output_format = ref "%type|%branch" in
     let speclist = Arg.align [
-        ("--fmt", Arg.Set_string output_format," Template for output");
+        ("--fmt", Arg.Set_string output_format," Template for output,"^
+                                               " default: %type|%branch");
         ("--dir", Arg.Set_string work_dir,     " Show result for directory");
         ("--version", Arg.Set show_version,    " Show version");
     ] in
@@ -40,7 +41,7 @@ let () =
         | None -> print_endline ""
         | Some (scm, path) ->
             let branch = Scm.get_branch path scm in
-            let o1 = Str.replace_first (Str.regexp "%{type}") scm fmt in
-            let o2 = Str.replace_first (Str.regexp "%{branch}") branch o1
+            let o1 = Str.replace_first (Str.regexp "%type") scm fmt in
+            let o2 = Str.replace_first (Str.regexp "%branch") branch o1
             in
                 print_endline o2

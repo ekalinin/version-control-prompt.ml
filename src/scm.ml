@@ -70,3 +70,20 @@ let get_branch path scm = match scm with
     | "git" -> let txt = get_metadata_file_content path scm "HEAD" in
                 Str.replace_first (Str.regexp "ref: refs/heads/") "" txt
     | _     -> ""
+
+
+let get_status_from_stats s = match s with
+    | [] -> "✔"
+    | _  -> "⚡"
+
+(**
+ *  Returns stats - list of statuses (like 'A ', 'AM', ' M', etc)
+ *)
+let get_stats path scm =
+    let stats_raw = match scm with
+        | "svn" -> Utils.sh2 ("svn status "^ path)
+        | "hg"  -> Utils.sh2 ("hg status --cwd "^path)
+        | "git" -> Utils.sh2 ("git -C "^path^" status --short")
+        | _     -> "" in
+    Utils.split "\n" stats_raw
+        |> List.fold_left (fun acc x -> (String.sub x 0 2) :: acc) []

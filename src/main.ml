@@ -9,7 +9,7 @@ let version = "0.2.0"
 let parse_options =
     let show_version = ref false in
     let work_dir = ref (Sys.getcwd ()) in
-    let output_format = ref "%type|%branch" in
+    let output_format = ref "%type|%branch|%status" in
     let speclist = Arg.align [
         ("--fmt", Arg.Set_string output_format," Template for output,"^
                                                " default: %type|%branch");
@@ -41,7 +41,9 @@ let () =
         | None -> print_endline ""
         | Some (scm, path) ->
             let branch = Scm.get_branch path scm in
+            let stats_raw = Scm.get_stats path scm in
+            let status = Scm.get_status_from_stats stats_raw in
             let o1 = Utils.replace "%type" scm fmt in
-            let o2 = Utils.replace "%branch" branch o1
-            in
-                print_endline o2
+            let o2 = Utils.replace "%branch" branch o1 in
+            let o3 = Utils.replace "%status" status o2 in
+                print_endline o3

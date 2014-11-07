@@ -1,7 +1,7 @@
 (**
  * Version of the application
  *)
-let version = "0.1.0"
+let version = "0.2.0"
 
 (**
  * Parses command line args and returns options
@@ -41,7 +41,7 @@ let () =
         | None -> print_endline ""
         | Some (scm, path) ->
             let branch = Scm.get_branch path scm in
-            let o1 = Str.replace_first (Str.regexp "%type") scm fmt in
-            let o2 = Str.replace_first (Str.regexp "%branch") branch o1
+            let o1 = Utils.replace "%type" scm fmt in
+            let o2 = Utils.replace "%branch" branch o1
             in
                 print_endline o2

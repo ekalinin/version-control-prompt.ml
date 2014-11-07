@@ -4,3 +4,4 @@
 *.o
 TODO.md
 bin/*
+_build/

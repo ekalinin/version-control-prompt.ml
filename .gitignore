@@ -1,7 +1,13 @@
 *.swp
-*.cmi
-*.cmx
-*.o
 TODO.md
 bin/*
 _build/
+*.annot
+*.cmo
+*.cma
+*.cmi
+*.a
+*.o
+*.cmx
+*.cmxs
+*.cmxa

@@ -51,3 +51,18 @@ let replace pattern newpart s =
  *)
 let split sep s =
     Str.split (Str.regexp sep) s
+
+(**
+ *  Removes the last element from a list
+ *)
+let rec init xs = match xs with
+        | [] -> []
+        | [_] -> []
+        | x'::xs' -> x'::init xs'
+
+(**
+ *  Returns last element of the list
+ *)
+let last = function
+    | x::xs -> List.fold_left (fun _ y -> y) x xs
+    | []    -> failwith "no element"

@@ -81,9 +81,30 @@ let get_status_from_stats s = match s with
  *)
 let get_stats path scm =
     let stats_raw = match scm with
-        | "svn" -> Utils.sh2 ("svn status "^ path)
+        | "svn" -> Utils.sh2 ("svn status "^path)
         | "hg"  -> Utils.sh2 ("hg status --cwd "^path)
         | "git" -> Utils.sh2 ("git -C "^path^" status --short")
         | _     -> "" in
     Utils.split "\n" stats_raw
         |> List.fold_left (fun acc x -> (String.sub x 0 2) :: acc) []
+
+(**
+ *  Count pairs in list and returns string
+ *)
+let get_clean_stats s =
+    (* for each key saved (key, count) pair *)
+    let counter acc x = match acc with
+        | [] -> [(x, 1)]
+        | _ -> let (x', cnt) = Utils.last acc in
+            if String.compare x x' == 0
+            then (Utils.init acc) @ [(x, cnt + 1)]
+            else acc @ [(x, 1)] in
+    (* for each key (key, count) returns "key=count" *)
+    let formatter acc x =
+        let (status, count) = x in
+        ("'"^status^"'="^string_of_int count)::acc
+    in
+    List.sort String.compare s |>
+        List.fold_left counter [] |>
+        List.fold_left formatter [] |>
+        String.concat ","

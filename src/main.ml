@@ -1,7 +1,7 @@
 (**
  * Version of the application
  *)
-let version = "0.2.0"
+let version = "0.3.0"
 
 (**
  * Parses command line args and returns options
@@ -9,7 +9,7 @@ let version = "0.2.0"
 let parse_options =
     let show_version = ref false in
     let work_dir = ref (Sys.getcwd ()) in
-    let output_format = ref "%type|%branch|%status" in
+    let output_format = ref "%type|%branch|%status %stats" in
     let speclist = Arg.align [
         ("--fmt", Arg.Set_string output_format," Template for output,"^
                                                " default: %type|%branch");
@@ -42,8 +42,10 @@ let () =
         | Some (scm, path) ->
             let branch = Scm.get_branch path scm in
             let stats_raw = Scm.get_stats path scm in
+            let stats = Scm.get_clean_stats stats_raw in
             let status = Scm.get_status_from_stats stats_raw in
-            let o1 = Utils.replace "%type" scm fmt in
-            let o2 = Utils.replace "%branch" branch o1 in
-            let o3 = Utils.replace "%status" status o2 in
-                print_endline o3
+            Utils.replace "%type" scm fmt |>
+            Utils.replace "%branch" branch |>
+            Utils.replace "%status" status |>
+            Utils.replace "%stats" stats |>
+            print_endline

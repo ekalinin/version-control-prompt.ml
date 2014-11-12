@@ -60,6 +60,27 @@ vc_prompt() {
 PS1='\u@\h:\w $(vc_prompt)\$ '
 ```
 
+Default format string:
+
+```
+%type|%branch|%status %stats
+```
+
+You can override id like this:
+
+```bash
+# ...
+
+vc_prompt() {
+    local vc_prompt=$(~/bin/version-control-prompt --fmt="(%type:%branch:%status)")
+    if [ "$vc_prompt"  != "" ]; then
+        echo -e "on $PURPLE2$vc_prompt$RESET"
+    fi
+}
+
+# ...
+```
+
 
 LICENSE
 =======

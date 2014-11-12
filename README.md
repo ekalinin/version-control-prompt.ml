@@ -72,7 +72,7 @@ You can override id like this:
 # ...
 
 vc_prompt() {
-    local vc_prompt=$(~/bin/version-control-prompt --fmt="(%type:%branch:%status)")
+    local vc_prompt=$(~/bin/version-control-prompt --fmt "(%type:%branch:%status)")
     if [ "$vc_prompt"  != "" ]; then
         echo -e "on $PURPLE2$vc_prompt$RESET"
     fi

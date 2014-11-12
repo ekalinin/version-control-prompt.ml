@@ -40,12 +40,9 @@ let () =
         match Scm.get_scm_for_dir dir with
         | None -> print_endline ""
         | Some (scm, path) ->
-            let branch = Scm.get_branch path scm in
             let stats_raw = Scm.get_stats path scm in
-            let stats = Scm.get_clean_stats stats_raw in
-            let status = Scm.get_status_from_stats stats_raw in
             Utils.replace "%type" scm fmt |>
-            Utils.replace "%branch" branch |>
-            Utils.replace "%status" status |>
-            Utils.replace "%stats" stats |>
+            Utils.replace "%branch" (Scm.get_branch path scm) |>
+            Utils.replace "%status" (Scm.get_status_from_stats stats_raw) |>
+            Utils.replace "%stats" (Scm.get_clean_stats stats_raw) |>
             print_endline

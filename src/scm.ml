@@ -91,7 +91,7 @@ let get_stats path scm =
 (**
  *  Count pairs in list and returns string
  *)
-let get_clean_stats s =
+let get_clean_stats ss =
     (* for each key saved (key, count) pair *)
     let counter acc x = match acc with
         | [] -> [(x, 1)]
@@ -102,9 +102,9 @@ let get_clean_stats s =
     (* for each key (key, count) returns "key=count" *)
     let formatter acc x =
         let (status, count) = x in
-        ("'"^status^"'="^string_of_int count)::acc
+        ("\""^status^"\"="^string_of_int count)::acc
     in
-    List.sort String.compare s |>
+    List.sort String.compare ss |>
         List.fold_left counter [] |>
         List.fold_left formatter [] |>
         String.concat ","

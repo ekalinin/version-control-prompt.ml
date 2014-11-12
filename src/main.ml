@@ -9,10 +9,11 @@ let version = "0.3.0"
 let parse_options =
     let show_version = ref false in
     let work_dir = ref (Sys.getcwd ()) in
-    let output_format = ref "%type|%branch|%status %stats" in
+    let default_format = "%type|%branch|%status %stats" in
+    let output_format = ref default_format in
     let speclist = Arg.align [
         ("--fmt", Arg.Set_string output_format," Template for output,"^
-                                               " default: %type|%branch");
+                                               " default: "^default_format);
         ("--dir", Arg.Set_string work_dir,     " Show result for directory");
         ("--version", Arg.Set show_version,    " Show version");
     ] in

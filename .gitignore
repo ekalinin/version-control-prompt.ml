@@ -11,3 +11,5 @@ _build/
 *.cmx
 *.cmxs
 *.cmxa
+.vagrant/
+_build-*/
